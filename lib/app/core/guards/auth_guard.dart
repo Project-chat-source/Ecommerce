@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:learning/app/core/routes/app_route.dart';
-import 'package:learning/app/global/localstorage/localstorage.dart';
+import 'package:learning/app/global/secure%20storage/secure_storage.dart';
 import 'package:learning/main.dart';
 
 class AuthGuard extends AutoRouteGuard {
-  final Localstorage localstorage = getIt<Localstorage>();
+  final SecureStorage localstorage = getIt<SecureStorage>();
 
   @override
   FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router) async{

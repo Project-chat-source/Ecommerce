@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:learning/app/core/routes/app_route.dart';
-import 'package:learning/app/global/localstorage/localstorage.dart';
+import 'package:learning/app/global/secure%20storage/secure_storage.dart';
 import 'package:learning/app/view/features/Home/data/data%20source/home_page_data_source.dart';
 import 'package:learning/app/view/features/Home/data/repositories/home_repositories_impl.dart';
 import 'package:learning/app/view/features/Home/domain/repositories/home_repositories.dart';
@@ -13,18 +14,17 @@ import 'package:learning/app/view/features/Login/domain/repositories/auth_reposi
 import 'package:learning/app/view/features/Login/domain/usecases/login_usecase.dart';
 import 'package:learning/app/view/features/Login/ui/bloc/login_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final appRouter = AppRoute();
 final getIt = GetIt.instance;
 
 Future<void> setupLocator() async {
-  final sharedPrefrences = await SharedPreferences.getInstance();
+  final storage = const FlutterSecureStorage();
 
   getIt.registerLazySingleton<LoginDataSource>(() => LoginDataSourceImpl());
-  getIt.registerLazySingleton(() => sharedPrefrences);
-  getIt.registerLazySingleton<Localstorage>(
-    () => Localstorage(pref: getIt<SharedPreferences>()),
+  getIt.registerLazySingleton(() => storage);
+  getIt.registerLazySingleton<SecureStorage>(
+    () => SecureStorage(storage: getIt<FlutterSecureStorage>()),
   );
   getIt.registerLazySingleton<HomePageDataSource>(
     () => HomePageDataSourceImpl(),
@@ -38,7 +38,7 @@ Future<void> setupLocator() async {
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       loginDataSource: getIt<LoginDataSource>(),
-      localstorage: getIt<Localstorage>(),
+      localstorage: getIt<SecureStorage>(),
     ),
   );
   getIt.registerLazySingleton<LoginUseCase>(

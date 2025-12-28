@@ -16,21 +16,17 @@ class LoginDataSourceImpl extends LoginDataSource {
         body: jsonEncode({'username': username, 'password': password}),
       );
 
-      print('executing this success bloc ${data.statusCode} ');
       if (data.statusCode == 200) {
         final response = jsonDecode(data.body);
 
         return LoginModel.fromJson(response);
       } else {
-
         final response = jsonDecode(data.body);
-        final errorMessage = response['message'] ?? 'Login failed with ${data.statusCode}';
-        
+        final errorMessage =
+            response['message'] ?? 'Login failed with ${data.statusCode}';
         throw Exception(errorMessage);
       }
     } catch (e) {
-
-      print('executing this catch block $e');
       throw Exception('An error occured ${e.toString()}');
     }
   }

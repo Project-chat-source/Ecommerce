@@ -1,6 +1,18 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:learning/app/view/features/Home/data/models/product_response_model.dart';
+
+final Dio dio = Dio(
+  BaseOptions(
+    baseUrl: 'https://dummyjson.com',
+    connectTimeout: Duration(seconds: 5),
+    sendTimeout: Duration(seconds: 5),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    receiveTimeout: Duration(seconds: 5)
+    
+  )
+);
 
 abstract class HomePageDataSource {
   Future<ProductResponseModel> loadProducts();
@@ -10,18 +22,16 @@ class HomePageDataSourceImpl implements HomePageDataSource {
   @override
   Future<ProductResponseModel> loadProducts() async {
     try {
-      final data = await http.get(Uri.parse('https://dummyjson.com/products'));
+      final data = await dio.getUri(
+        Uri.parse('/products?limit=0'),
+      );
 
       if (data.statusCode == 200) {
-        final response = jsonDecode(data.body) as Map<String , dynamic>;
-
-        return ProductResponseModel.fromJson(response);
+        return ProductResponseModel.fromJson(data.data);
       } else {
-        final response = jsonDecode(data.body);
-        throw Exception(response['message'] ?? 'failed to load products');
+        throw Exception(data.data['message'] ?? 'failed to load products');
       }
     } catch (e) {
-      print('error from datasource $e');
       throw Exception(e.toString());
     }
   }
